@@ -1,6 +1,7 @@
 package ca.hccis.bookstore.bo;
 
 import ca.hccis.bookstore.entity.Book;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -41,7 +42,8 @@ public class BookBOTest {
      * 2 copies at $10.00 released in 1949 = 20.00 * 1.50 = 30.00
      */
     @Test
-    public void testCalculateCostPre1950CarriesFiftyPercentPremium() {
+    @DisplayName("Pre-1950 book carries a 50% premium")
+    public void testPre1950Premium() {
         Book book = new Book("The Old One", 10.00, "1949", 2);
 
         double actual = BookBO.calculateCost(book);
@@ -59,7 +61,8 @@ public class BookBOTest {
      * 3 copies at $12.99 released in 1977 = 38.97 * 1.20 = 46.764
      */
     @Test
-    public void testCalculateCostSeventiesCarriesTwentyPercentPremium() {
+    @DisplayName("1970s book carries a 20% premium")
+    public void testSeventiesPremium() {
         Book book = new Book("The Shining", 12.99, "1977", 3);
 
         double actual = BookBO.calculateCost(book);
@@ -81,7 +84,8 @@ public class BookBOTest {
      * 4 copies at $18.50 released in 2001 = 74.00, unchanged
      */
     @Test
-    public void testCalculateCostModernTitleCarriesNoPremium() {
+    @DisplayName("Modern book carries no premium")
+    public void testModernNoPremium() {
         Book book = new Book("Life of Pi", 18.50, "2001", 4);
 
         double actual = BookBO.calculateCost(book);
@@ -98,7 +102,8 @@ public class BookBOTest {
      * AI generated.  1949 is inside the high premium band, 1950 is not.
      */
     @Test
-    public void testGetVintageMultiplierBoundaryAt1950() {
+    @DisplayName("Boundary: 1949 premium, 1950 none")
+    public void testBoundary1950() {
         assertEquals(BookBO.PREMIUM_HIGH_MULTIPLIER,
                 BookBO.getVintageMultiplier("1949"), TOLERANCE);
         assertEquals(BookBO.NO_PREMIUM_MULTIPLIER,
@@ -109,7 +114,8 @@ public class BookBOTest {
      * AI generated.  1969 gets no premium, 1970 opens the 20% band.
      */
     @Test
-    public void testGetVintageMultiplierBoundaryAt1970() {
+    @DisplayName("Boundary: 1969 none, 1970 premium")
+    public void testBoundary1970() {
         assertEquals(BookBO.NO_PREMIUM_MULTIPLIER,
                 BookBO.getVintageMultiplier("1969"), TOLERANCE);
         assertEquals(BookBO.PREMIUM_LOW_MULTIPLIER,
@@ -120,7 +126,8 @@ public class BookBOTest {
      * AI generated.  1989 closes the 20% band, 1990 is outside it.
      */
     @Test
-    public void testGetVintageMultiplierBoundaryAt1990() {
+    @DisplayName("Boundary: 1989 premium, 1990 none")
+    public void testBoundary1990() {
         assertEquals(BookBO.PREMIUM_LOW_MULTIPLIER,
                 BookBO.getVintageMultiplier("1989"), TOLERANCE);
         assertEquals(BookBO.NO_PREMIUM_MULTIPLIER,
@@ -135,7 +142,8 @@ public class BookBOTest {
      * though the record says only 1 copy sold.
      */
     @Test
-    public void testCalculateCostWithExplicitQuantityIgnoresAmountSold() {
+    @DisplayName("Quote overload prices the requested quantity")
+    public void testQuoteQuantity() {
         Book book = new Book("Neuromancer", 20.00, "1985", 1);
 
         double actual = BookBO.calculateCost(book, 5);
@@ -149,7 +157,8 @@ public class BookBOTest {
      * price and quantity.
      */
     @Test
-    public void testCalculateCostVintageCostsMoreThanModern() {
+    @DisplayName("Vintage costs more than modern at equal price")
+    public void testVintageCostsMore() {
         Book vintage = new Book("Vintage Title", 15.00, "1930", 2);
         Book modern = new Book("Modern Title", 15.00, "2020", 2);
 
@@ -161,7 +170,8 @@ public class BookBOTest {
      * AI generated.  Nothing sold costs nothing.
      */
     @Test
-    public void testCalculateCostZeroCopiesSoldIsZero() {
+    @DisplayName("Zero copies sold costs nothing")
+    public void testZeroSold() {
         Book book = new Book("Unsold Title", 45.00, "1935", 0);
 
         assertEquals(0.00, BookBO.calculateCost(book), TOLERANCE);
@@ -172,7 +182,8 @@ public class BookBOTest {
      * than throwing, so a bad row cannot bring the report down.
      */
     @Test
-    public void testCalculateCostUnreadableReleaseYearReturnsNoCost() {
+    @DisplayName("Unreadable release year returns NO_COST")
+    public void testBadYear() {
         Book book = new Book("Bad Data", 10.00, "not a year", 3);
 
         assertDoesNotThrow(() -> BookBO.calculateCost(book));
@@ -183,7 +194,8 @@ public class BookBOTest {
      * AI generated.  A null record returns the sentinel rather than throwing.
      */
     @Test
-    public void testCalculateCostNullBookReturnsNoCost() {
+    @DisplayName("Null record returns NO_COST")
+    public void testNullBook() {
         assertDoesNotThrow(() -> BookBO.calculateCost(null));
         assertEquals(BookBO.NO_COST, BookBO.calculateCost(null), TOLERANCE);
     }
