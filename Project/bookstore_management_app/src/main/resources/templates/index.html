@@ -1,73 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:include="fragments/head :: headerFragment">
-    <title id="pageTitle">Squash Skills Tracker</title>
-    <!--        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+    <title id="pageTitle" th:text="#{label.business.name}">Book Store Management App</title>
 </head>
 <body>
 <nav th:replace="fragments/navHeader :: navbar"></nav>
 
-<!--        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-<div style="width:600px; height:350px;">
-    <canvas id="assessmentChart"></canvas>
+<!-- KP 2026-10-24 #5 Removed the squash sample chart from the welcome page; the chart moves to the income report. -->
+<div class="container has-text-centered">
+    <h2 class="title is-2" th:text="#{label.welcome.to} + ' ' + #{label.business.name}">Welcome</h2>
 </div>
 
-<script th:inline="javascript">
-    const assessmentData = [[${assessments}]]; //Note possible syntax warning issue but functions correctly.
-    console.log('Assessment Data:', assessmentData);
-
-    const athleteNames = assessmentData.map(item => item.athleteName);
-
-    //const forehandDrives = [1,2,3];
-    const forehandDrives = assessmentData.map(item => item.forehandDrives);
-    const technicalScores = assessmentData.map(item => item.technicalScore);
-
-    const ctx = document.getElementById('assessmentChart');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: athleteNames,
-            datasets: [{
-                label: 'FH Drives',
-                data: forehandDrives,
-                borderWidth: 1,
-                // --- ADD TRENDLINE CONFIG HERE ---
-                trendlineLinear: {
-                    style: 'rgba(255, 99, 132, .8)',
-                    lineStyle: 'solid', // "solid", "dashed"
-                    width: 3
-                }
-            },
-                {
-                    label: 'Technical Score',
-                    data: technicalScores,
-                    borderWidth: 1,
-                    // --- ADD TRENDLINE CONFIG HERE ---
-                    trendlineLinear: {
-                        style: 'rgba(255, 99, 132, .8)',
-                        lineStyle: 'solid', // "solid", "dashed"
-                        width: 3
-                    }
-                }
-
-
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    })
-    ;
-</script>
-
-
 <footer th:replace="fragments/footer :: footer"></footer>
-
 
 </body>
 </html>

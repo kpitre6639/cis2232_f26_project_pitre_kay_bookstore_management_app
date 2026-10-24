@@ -1,9 +1,7 @@
 package ca.hccis.bookstore.controllers;
 
-import ca.hccis.bookstore.jpa.entity.SkillsAssessmentSquashTechnical;
 import org.springframework.ui.Model;
 import ca.hccis.bookstore.repositories.CodeValueRepository;
-import ca.hccis.bookstore.repositories.SkillsAssessmentSquashTechnicalRepository;
 import ca.hccis.bookstore.util.CisUtility;
 
 import jakarta.servlet.http.HttpSession;
@@ -11,8 +9,6 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.ArrayList;
 
 /**
  * Base controller which control general functionality in the app.
@@ -24,11 +20,9 @@ import java.util.ArrayList;
 public class BaseController {
 
     private final CodeValueRepository _cvr;
-    private final SkillsAssessmentSquashTechnicalRepository _sastr;
 
     @Autowired
-    public BaseController(SkillsAssessmentSquashTechnicalRepository sastr, CodeValueRepository cvr) {
-        _sastr = sastr;
+    public BaseController(CodeValueRepository cvr) {
         _cvr = cvr;
     }
 
@@ -46,11 +40,7 @@ public class BaseController {
         String currentDate = CisUtility.getCurrentDate("yyyy-MM-dd");
         session.setAttribute("currentDate", currentDate);
 
-        //BusPassBO.setBusPassTypes(_cvr, session);
-        ArrayList<SkillsAssessmentSquashTechnical> assessments = new ArrayList();
-        _sastr.findAll().forEach(assessments::add);
-        assessments.sort((a, b) -> a.getTechnicalScore().compareTo(b.getTechnicalScore()));
-        model.addAttribute("assessments", assessments);
+        //KP 2026-10-24 #5 Removed the squash sample assessments list that fed the home page chart.
 
         return "index";
     }

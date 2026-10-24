@@ -18,21 +18,12 @@
     </div>
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a th:href="@{/skillsassessmentsquashtechnical}" href="/skillsassessmentsquashtechnical/" class="accent navbar-link">Assessments</a>
-                <div class="accent-background navbar-dropdown">
-                    <a th:href="@{/skillsassessmentsquashtechnical}" class="accent navbar-item">View</a>
-                    <a th:href="@{/skillsassessmentsquashtechnical/list/edit}" class="accent navbar-item">List Edit</a>
-                </div>
-            </div>
             <div class="navbar-end">
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <a th:href="@{/report}" href="/about" class="accent navbar-link">Reports</a>
+                    <a th:href="@{/report}" href="/report" class="accent navbar-link" th:text="#{label.reports}">Reports</a>
                     <div class="accent-background navbar-dropdown">
-                        <a th:href="@{/report/squash/name}" class="accent navbar-item"
-                           th:text="#{label.report.athlete.assessor.report}">Name report-placeholder</a>
-                        <a th:href="@{/report/squash/score}" class="accent navbar-item"
-                           th:text="#{label.report.score.range}">Score range report-placeholder</a>
+                        <a th:href="@{/report/income}" class="accent navbar-item"
+                           th:text="#{label.report.income}">Income report-placeholder</a>
                     </div>
                 </div>
                 <div class="navbar-end">

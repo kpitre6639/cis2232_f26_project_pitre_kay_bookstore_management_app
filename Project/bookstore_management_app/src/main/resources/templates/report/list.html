@@ -26,17 +26,13 @@
         <!--^This is illegal. However, th:replace doesn't allow custom styling. This CSS is needed.^-->
         <nav th:replace="fragments/navHeader :: navbar"></nav>
         <div class="container has-text-centered">
-            <h2 class="title is-2" style="margin-bottom:-10px!important">Reports</h2>
+            <h2 class="title is-2" style="margin-bottom:-10px!important" th:text="#{label.reports}">Reports</h2>
             <br></br>
             <table class="wbb centered" style="padding:0!important;display:inline-block!important">
                 <tr>
-                    <td><a th:href="@{/report/squash/name}" th:text="#{label.report.athlete.assessor.report}" >Placeholder report 1</a></td>
+                    <td><a th:href="@{/report/income}" th:text="#{label.report.income}">Income report-placeholder</a></td>
                     <td></td>
-                </tr><!-- comment -->
-                <tr>
-                    <td><a th:href="@{/report/squash/score}"th:text="#{label.report.score.range}" >Placeholder report 2</a></td>
-                    <td></td>
-                </tr><!-- comment -->
+                </tr>
             </table>
         </div>
         <footer th:replace="fragments/footer :: footer"></footer>
