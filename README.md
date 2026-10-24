@@ -103,6 +103,16 @@ Total sales for a year is the sum of `amountSold × price × multiplier` across 
 
 ---
 
+## Report Details
+
+### Income report
+
+Choose a year from a drop-down of the years that have sales on record, and optionally a genre. The report returns every sales record for that year (and genre, if chosen) and shows, for the period: total income, average income per day (total ÷ 365), average income per month (total ÷ 12), and the average income per year across all years on record (sum of all years ÷ number of distinct years). Income for a record is `amountSold × price × vintage multiplier`, the same calculation as the customer cost quote.
+
+The results page shows the four figures, a table of the records that produced them (date sold, title, genre, copies, unit price, income), and a bar chart of income by month for the chosen year. The same results are written to a file in `c:\cis2232\` named `IncomeReport` followed by the date and time, one record per line, with the four summary figures at the end.
+
+---
+
 ## Repository structure
 
 ```
