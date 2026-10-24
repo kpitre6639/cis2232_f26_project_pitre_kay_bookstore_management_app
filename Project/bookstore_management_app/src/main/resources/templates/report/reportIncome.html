@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!-- KP 2026-10-24 #5 Sprint 2 income report - input form, results and chart on one page. -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: headerFragment">
+    <title id="pageTitle">Income Report</title>
+</head>
+<body>
+<style scoped="scoped">
+    label { margin-right: 8px; }
+    .report-form select { min-width: 160px; margin-bottom: 8px; }
+    .summary-table td { padding: 4px 16px !important; text-align: left !important; }
+    .summary-table td:last-child { text-align: right !important; font-weight: bold; }
+    .detail-table th, .detail-table td { padding: 4px 12px !important; text-align: left !important; }
+    .detail-table td.num { text-align: right !important; }
+</style>
+<nav th:replace="fragments/navHeader :: navbar"></nav>
+
+<div class="container has-text-centered">
+    <h2 class="title is-2" th:text="#{label.report.income}">Income Report</h2>
+
+    <!-- ===================== Inputs ===================== -->
+    <form th:action="@{/report/income/submit}" method="post" class="wbb report-form"
+          style="display:inline-block;text-align:left!important">
+
+        <label for="yearSelect" th:text="#{label.report.year}">Year:</label>
+        <select id="yearSelect" th:field="${reportInput.year}" required="required">
+            <option value="" th:text="#{label.select}">-- Select --</option>
+            <option th:each="year : ${session.years}" th:value="${year}" th:text="${year}"></option>
+        </select>
+        <br/>
+        <label for="genreSelect" th:text="#{label.report.genre}">Genre:</label>
+        <select id="genreSelect" th:field="${reportInput.genre}">
+            <option value="" th:text="#{label.all.genres}">All genres</option>
+            <option th:each="genre : ${session.genres}" th:value="${genre}" th:text="${genre}"></option>
+        </select>
+
+        <br/>
+        <button style="display:block;margin-top:16px!important" class="centered" th:text="#{label.submit}">Submit</button>
+    </form>
+
+    <br/><br/>
+    <p th:if="${not #strings.isEmpty(message)}" th:text="${message}">not found</p>
+
+    <!-- ===================== Results ===================== -->
+    <div th:if="${incomeSummary != null and incomeSummary.recordCount > 0}">
+
+        <h3 class="title is-4" th:text="${reportInput}">Income report for year</h3>
+
+        <!-- The four figures the BA asked for -->
+        <table class="summary-table centered" style="display:inline-block!important">
+            <tr>
+                <td th:text="#{label.total.income}">Total income</td>
+                <td th:text="${'$' + #numbers.formatDecimal(incomeSummary.totalIncome, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+            </tr>
+            <tr>
+                <td th:text="#{label.average.per.day}">Average income per day</td>
+                <td th:text="${'$' + #numbers.formatDecimal(incomeSummary.averagePerDay, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+            </tr>
+            <tr>
+                <td th:text="#{label.average.per.month}">Average income per month</td>
+                <td th:text="${'$' + #numbers.formatDecimal(incomeSummary.averagePerMonth, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+            </tr>
+            <tr>
+                <td th:text="#{label.average.per.year}">Average income per year (all years)</td>
+                <td th:text="${'$' + #numbers.formatDecimal(incomeSummary.averagePerYear, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+            </tr>
+        </table>
+
+        <br/><br/>
+
+        <!-- Chart of income by month for the selected year -->
+        <div style="width: 700px; height: 350px; display: flex; justify-content: center; align-items: center; margin: 0 auto;">
+            <div style="width: 650px; height: 320px; position: relative;">
+                <canvas id="incomeChart"></canvas>
+            </div>
+        </div>
+
+        <br/>
+
+        <!-- The records behind the figures -->
+        <table class="detail-table centered" style="display:inline-block!important">
+            <tr>
+                <th th:text="#{label.date.sold}">Date sold</th>
+                <th th:text="#{label.book.name}">Title</th>
+                <th th:text="#{label.genre}">Genre</th>
+                <th th:text="#{label.copies}">Copies</th>
+                <th th:text="#{label.unit.price}">Unit price</th>
+                <th th:text="#{label.income}">Income</th>
+            </tr>
+            <tr th:each="book : ${reportInput.books}">
+                <td th:text="${book.dateSold}">2026-09-23</td>
+                <td th:text="${book.bookName}">Title</td>
+                <td th:text="${book.genre}">Genre</td>
+                <td class="num" th:text="${book.amountSold}">0</td>
+                <td class="num" th:text="${'$' + #numbers.formatDecimal(book.price, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+                <td class="num" th:text="${'$' + #numbers.formatDecimal(T(ca.hccis.bookstore.bo.BookBO).calculate(book), 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+            </tr>
+        </table>
+
+        <script th:inline="javascript">
+            //Income by month for the selected year, January first, from the model.
+            const incomeByMonth = [[${incomeSummary.incomeByMonth}]];
+            const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            const ctx = document.getElementById('incomeChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Income ($)',
+                        data: incomeByMonth,
+                        backgroundColor: 'rgba(128, 0, 32, 0.7)',
+                        borderColor: 'rgba(128, 0, 32, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<br/>
+<footer th:replace="fragments/footer :: footer"></footer>
+</body>
+</html>

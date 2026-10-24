@@ -8,13 +8,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * File utilities for the application.
+ *
+ * @author BJM
+ * @modifiedby KP 2026-10-24 #5 File name format changed to <report><yyyyMMddHHmm>.txt
+ */
 public class CisUtilityFile {
 
     public static final String FOLDER_NAME = "c:\\CIS2232\\";
 
     public static void writeReportToFile(String fileName, ArrayList theObjects) {
 
-        String fullName = FOLDER_NAME + fileName + CisUtility.getCurrentDate("_yyyyMMddhhmmss") + ".txt";
+        //KP 2026-10-24 #5 File name matches the sprint requirement, e.g. IncomeReport202610241630.txt
+        String fullName = FOLDER_NAME + fileName + CisUtility.getCurrentDate("yyyyMMddHHmm") + ".txt";
         Path path = Paths.get(FOLDER_NAME);
         try {
             Files.createDirectories(path);
