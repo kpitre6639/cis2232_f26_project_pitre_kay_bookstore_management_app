@@ -5,6 +5,8 @@ import ca.hccis.bookstore.dao.BookDAO;
 import ca.hccis.bookstore.entity.ReportInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +28,13 @@ import java.util.ArrayList;
 public class ReportController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+
+    //Injected by Spring so user-facing text comes from messages.properties, not the code.
+    private final MessageSource messageSource;
+
+    public ReportController(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     /**
      * Send the user to list of reports view.
@@ -94,7 +103,8 @@ public class ReportController {
 
         //Add a message in case the report does not contain any data.
         if (reportInput.getBooks() == null || reportInput.getBooks().isEmpty()) {
-            model.addAttribute("message", "No sales found for that year and genre");
+            model.addAttribute("message", messageSource.getMessage(
+                    "error.message.no.data.found.report", null, LocaleContextHolder.getLocale()));
         }
 
         //Put the results in the model so they can be used on the view.
