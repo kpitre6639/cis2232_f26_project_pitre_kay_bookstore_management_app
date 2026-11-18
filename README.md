@@ -113,12 +113,35 @@ The results page shows the four figures, a table of the records that produced th
 
 ---
 
+## Book maintenance (Sprint 3)
+
+Full create, read, update and delete on the `Book` table using **Spring Data JPA** and **Spring Validation**, under **Books** in the navigation.
+
+| URL | Does |
+|---|---|
+| `/book` | Lists every record with Edit and Delete beside each row |
+| `/book/add` | Empty form to add a record |
+| `/book/edit/{id}` | The same form loaded with an existing record |
+| `/book/submit` | Handles both add and edit; validates before saving |
+| `/book/delete/{id}` | Deletes the record and returns to the list |
+
+| Class | Purpose |
+|---|---|
+| `ca.hccis.bookstore.repositories.BookRepository` | `extends CrudRepository<Book, Integer>` - no body, Spring generates it |
+| `ca.hccis.bookstore.controllers.BookController` | Repository injected by constructor; one form serves add and edit |
+| `ca.hccis.bookstore.jpa.entity.Book` | Validation constraints with the messages the user sees |
+
+**Validation** runs on add and edit through `@Valid` on the submit mapping. Title, author, genre and year released are required; year released must be four digits; price, copies sold and inventory cannot be negative; date sold, when given, must be `yyyy-MM-dd`. A failed submit returns the form with the message beside each field and saves nothing.
+
+---
+
 ## Repository structure
 
 ```
 Assignments/
   cis2232_a1_pitre_kay/          Assignment 1 - file I/O console application
   cis2232_a2_pitre_kay/          Assignment 2 - unit testing, TDD
+  cis2232_a3_pitre_kay/          Assignment 3 - two threads, console and JOptionPane
 Project/
   Documentation/                 Project topic document from the BA
   bookstore_management_app/      Spring Boot MVC web application
@@ -180,4 +203,4 @@ Spring Boot MVC with Thymeleaf, running on MySQL.
 
 ## Technology
 
-Java 25 · Spring Boot · Thymeleaf · MySQL · Maven · JUnit Jupiter 6.1.3 · Gson (Assignment 1)
+Java 25 · Spring Boot · Spring Data JPA · Spring Validation · Thymeleaf · MySQL · Maven · JUnit Jupiter 6.1.3 · Gson (Assignment 1)
