@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- KP 2026-11-18 #6 Sprint 3 - one form for add and edit, validated by Spring Validation. -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: headerFragment">
+    <title id="pageTitle">Add/Edit Book</title>
+</head>
+<body>
+<style scoped="scoped">
+    .book-form p { margin-bottom: 6px; }
+    .book-form label { display: inline-block; min-width: 150px; }
+    .book-form input { min-width: 240px; }
+    .book-form .field-error { color: #c62828; font-size: 0.9em; margin: 0 0 10px 150px; }
+</style>
+<nav th:replace="fragments/navHeader :: navbar"></nav>
+
+<div class="container has-text-centered">
+
+    <!-- Heading depends on whether the record already has an id -->
+    <h2 class="title is-2" th:if="${book.id != null}" th:text="#{label.edit.book}">Edit Book</h2>
+    <h2 class="title is-2" th:if="${book.id == null}" th:text="#{label.add.book}">Add Book</h2>
+
+    <form th:object="${book}" th:action="@{/book/submit}" method="post" class="wbb book-form"
+          style="display:inline-block;text-align:left!important">
+
+        <!-- Carried but never typed: the id says add vs edit, createdDateTime is set by the controller -->
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" th:field="*{createdDateTime}"/>
+
+        <p>
+            <label for="bookName" th:text="#{label.book.name}">Title</label>
+            <input type="text" id="bookName" th:field="*{bookName}" maxlength="100"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('bookName')}" th:errors="*{bookName}"></p>
+
+        <p>
+            <label for="author" th:text="#{label.author}">Author</label>
+            <input type="text" id="author" th:field="*{author}" maxlength="50"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></p>
+
+        <p>
+            <label for="genre" th:text="#{label.genre}">Genre</label>
+            <input type="text" id="genre" th:field="*{genre}" maxlength="30"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></p>
+
+        <p>
+            <label for="price" th:text="#{label.unit.price}">Price</label>
+            <input type="number" id="price" th:field="*{price}" step="0.01" min="0"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></p>
+
+        <p>
+            <label for="dateReleased" th:text="#{label.year.released}">Year released</label>
+            <input type="text" id="dateReleased" th:field="*{dateReleased}" maxlength="4" placeholder="yyyy"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('dateReleased')}" th:errors="*{dateReleased}"></p>
+
+        <p>
+            <label for="amountSold" th:text="#{label.copies}">Copies sold</label>
+            <input type="number" id="amountSold" th:field="*{amountSold}" min="0"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('amountSold')}" th:errors="*{amountSold}"></p>
+
+        <p>
+            <label for="inventoryAmount" th:text="#{label.inventory}">Inventory</label>
+            <input type="number" id="inventoryAmount" th:field="*{inventoryAmount}" min="0"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('inventoryAmount')}" th:errors="*{inventoryAmount}"></p>
+
+        <p>
+            <label for="dateSold" th:text="#{label.date.sold}">Date sold</label>
+            <input type="date" id="dateSold" th:field="*{dateSold}"/>
+        </p>
+        <p class="field-error" th:if="${#fields.hasErrors('dateSold')}" th:errors="*{dateSold}"></p>
+
+        <button type="submit" style="display:block;margin-top:16px!important" class="centered"
+                th:text="#{label.submit}">Submit</button>
+    </form>
+
+    <br/><br/>
+    <p><a th:href="@{/book}" href="/book" class="accent" th:text="#{label.back.to.list}">Back to list</a></p>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+</body>
+</html>

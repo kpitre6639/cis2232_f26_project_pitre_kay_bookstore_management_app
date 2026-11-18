@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- KP 2026-11-18 #6 Sprint 3 - list every book record with edit and delete. -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: headerFragment">
+    <title id="pageTitle">Books</title>
+</head>
+<body>
+<style scoped="scoped">
+    .book-table th, .book-table td { padding: 6px 12px !important; text-align: left !important; vertical-align: middle; }
+    .book-table td.num { text-align: right !important; }
+    .book-table td.actions { text-align: center !important; white-space: nowrap; }
+    .book-table td.actions a { margin: 0 6px; }
+    .message-success { color: #2e7d32; font-weight: bold; }
+    .message-error { color: #c62828; font-weight: bold; }
+</style>
+<nav th:replace="fragments/navHeader :: navbar"></nav>
+
+<div class="container has-text-centered">
+    <h2 class="title is-2" th:text="#{label.books}">Books</h2>
+
+    <!-- Messages from the controller arrive as message keys, resolved here -->
+    <p class="message-success"
+       th:if="${not #strings.isEmpty(messageSuccessKey)}"
+       th:text="#{${messageSuccessKey}}">Success</p>
+    <p class="message-error"
+       th:if="${not #strings.isEmpty(messageErrorKey)}"
+       th:text="#{${messageErrorKey}}">Error</p>
+
+    <!-- Add button -->
+    <p>
+        <a th:href="@{/book/add}" href="/book/add" class="accent accent-background button"
+           th:text="#{label.add.book}">Add Book</a>
+    </p>
+    <br/>
+
+    <!-- ===================== The list ===================== -->
+    <table class="book-table centered" style="display:inline-block!important">
+        <thead>
+        <tr>
+            <th th:text="#{label.id}">ID</th>
+            <th th:text="#{label.book.name}">Title</th>
+            <th th:text="#{label.author}">Author</th>
+            <th th:text="#{label.genre}">Genre</th>
+            <th th:text="#{label.unit.price}">Price</th>
+            <th th:text="#{label.year.released}">Released</th>
+            <th th:text="#{label.copies}">Sold</th>
+            <th th:text="#{label.inventory}">Inventory</th>
+            <th th:text="#{label.date.sold}">Date sold</th>
+            <th th:text="#{label.actions}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="current : ${books}">
+            <td class="num" th:text="${current.id}"></td>
+            <td th:text="${current.bookName}"></td>
+            <td th:text="${current.author}"></td>
+            <td th:text="${current.genre}"></td>
+            <td class="num" th:text="${'$' + #numbers.formatDecimal(current.price, 1, 'COMMA', 2, 'POINT')}"></td>
+            <td th:text="${current.dateReleased}"></td>
+            <td class="num" th:text="${current.amountSold}"></td>
+            <td class="num" th:text="${current.inventoryAmount}"></td>
+            <td th:text="${current.dateSold}"></td>
+            <td class="actions">
+                <a th:href="@{/book/edit/{id}(id=${current.id})}" class="accent"
+                   th:text="#{label.edit}">Edit</a>
+                <a th:href="@{/book/delete/{id}(id=${current.id})}" class="accent"
+                   th:text="#{label.delete}"
+                   th:attr="onclick=|return confirm('#{message.confirm.delete}');|">Delete</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(books)}">
+            <td colspan="10" th:text="#{error.message.no.books}">No books on file.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+</body>
+</html>
