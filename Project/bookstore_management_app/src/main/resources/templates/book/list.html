@@ -26,6 +26,17 @@
        th:if="${not #strings.isEmpty(messageErrorKey)}"
        th:text="#{${messageErrorKey}}">Error</p>
 
+    <!-- ===================== Search ===================== -->
+    <!-- KP 2026-11-18 #6 Sprint 3 - search by title or author -->
+    <form th:action="@{/book/search}" method="get">
+        <input type="text" name="searchText" th:value="${searchText}"
+               th:placeholder="#{label.search.title.author}" size="32"/>
+        <button type="submit" class="accent accent-background button"
+                th:text="#{label.search}">Search</button>
+        <a th:href="@{/book}" href="/book" class="accent" th:text="#{label.clear}">Clear</a>
+    </form>
+    <br/>
+
     <!-- Add button -->
     <p>
         <a th:href="@{/book/add}" href="/book/add" class="accent accent-background button"
@@ -68,7 +79,7 @@
                    th:attr="onclick=|return confirm('#{message.confirm.delete}');|">Delete</a>
             </td>
         </tr>
-        <tr th:if="${#lists.isEmpty(books)}">
+        <tr th:if="${#lists.isEmpty(books) and #strings.isEmpty(searchText)}">
             <td colspan="10" th:text="#{error.message.no.books}">No books on file.</td>
         </tr>
         </tbody>

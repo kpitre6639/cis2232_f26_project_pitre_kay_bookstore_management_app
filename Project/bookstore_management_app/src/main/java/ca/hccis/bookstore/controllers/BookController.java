@@ -14,9 +14,11 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,6 +45,7 @@ public class BookController {
     private static final String ATTRIBUTE_BOOK = "book";
     private static final String ATTRIBUTE_MESSAGE_SUCCESS = "messageSuccessKey";
     private static final String ATTRIBUTE_MESSAGE_ERROR = "messageErrorKey";
+    private static final String ATTRIBUTE_SEARCH_TEXT = "searchText";
 
     private final BookRepository bookRepository;
 
@@ -69,6 +72,45 @@ public class BookController {
     @RequestMapping("")
     public String list(Model model) {
         loadList(model);
+        return VIEW_LIST;
+    }
+
+    /**
+     * Search the books by title or author.
+     *
+     * The work is done by a derived query method on the repository; this
+     * method only tidies the input and decides what the view should say.
+     * An empty box is treated as "show everything" so the Clear link works.
+     *
+     * @param searchText the text typed by the user, may be null or blank
+     * @param model      the model for the view
+     * @return the list view, filtered to the matches
+     * @author KP
+     * @since 2026-11-18
+     */
+    @RequestMapping("/search")
+    public String search(@RequestParam(name = "searchText", required = false) String searchText,
+                         Model model) {
+
+        model.addAttribute(ATTRIBUTE_SEARCH_TEXT, searchText);
+
+        //Nothing typed - fall back to the full list.
+        if (searchText == null || searchText.trim().isEmpty()) {
+            loadList(model);
+            return VIEW_LIST;
+        }
+
+        String text = searchText.trim();
+        List<Book> books =
+                bookRepository.findByBookNameContainingIgnoreCaseOrAuthorContainingIgnoreCase(text, text);
+
+        logger.info("Search for '{}' matched {} book(s)", text, books.size());
+        model.addAttribute(ATTRIBUTE_BOOKS, books);
+
+        if (books.isEmpty()) {
+            model.addAttribute(ATTRIBUTE_MESSAGE_ERROR, "error.message.no.books.found");
+        }
+
         return VIEW_LIST;
     }
 
